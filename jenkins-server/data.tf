@@ -1,11 +1,11 @@
-data "aws_ami" "example" {
+data "aws_ami" "jenkins" {
 
   most_recent = true
   owners      = ["amazon"]
 
   filter {
     name   = "name"
-    values = ["ubuntu/images/hvm-ssd/ubuntu-jammy-22.04-amd64-server-20231207"]
+    values = ["ubuntu/images/hvm-ssd-gp3/ubuntu-noble-24.04-amd64-server-20240701.1"]
   }
 
   filter {

@@ -68,7 +68,7 @@ module "ec2_instance" {
   name = "jenkins_server"
 
   instance_type               = var.instance_type
-  ami                         = data.aws_ami.example.id
+  ami                         = data.aws_ami.jenkins.id
   key_name                    = "my-new-key"
   monitoring                  = true
   vpc_security_group_ids      = [module.sg.security_group_id]
@@ -79,7 +79,7 @@ module "ec2_instance" {
 
 
   tags = {
-    Name        = "jankins_server"
+    Name        = "jenkins_server"
     Terraform   = "true"
     Environment = "dev"
   }
