@@ -2,7 +2,7 @@
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
-  name = "eks_cluster_vpc"
+  name = "awake_cluster_vpc"
   cidr = var.vpc_cidr
 
   azs             = data.aws_availability_zones.azs.names
@@ -34,7 +34,7 @@ module "vpc" {
 module "eks" {
   source                         = "terraform-aws-modules/eks/aws"
   cluster_name                   = "awake-cluster"
-  cluster_version                = "1.29"
+  cluster_version                = "1.30"
   cluster_endpoint_public_access = true
   vpc_id                         = module.vpc.vpc_id
   subnet_ids                     = module.vpc.private_subnets
@@ -53,9 +53,9 @@ module "eks" {
   }
 }
 
-data "aws_eks_cluster" "cluster" {
-  name = module.eks.cluster_name
-}
+# data "aws_eks_cluster" "cluster" {
+#   name = module.eks.cluster_name
+# }
 
 data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_name
