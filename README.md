@@ -1,10 +1,28 @@
 # CICD-Terraform-EKS
-CICD-Terraform-EKS
-# Jenkins-Server creates VPC, 2x Public Subnets, SG's and installs Jenkins onto this ec2 server. 
-# EKS creates VPC, Subnets, SG's EKS, Nodes, roles and policies.
-# CICD-Terraform-EKS
 
-This repository contains the code for deploying an Amazon EKS (Elastic Kubernetes Service) cluster using Terraform. The deployment process involves setting up an EC2 instance to run Jenkins, which then automates the creation and management of the EKS cluster through a CI/CD pipeline.
+## Overview
+
+This project sets up a CI/CD pipeline using Terraform and EKS. It includes the creation of necessary infrastructure components and the installation of Jenkins for CI/CD operations.
+
+## Jenkins Server Setup
+
+- **VPC**: Creates a Virtual Private Cloud.
+- **Public Subnets**: Sets up two public subnets.
+- **Security Groups (SG)**: Configures security groups.
+- **Jenkins Installation**: Installs Jenkins onto an EC2 server.
+
+## EKS Cluster Setup
+
+- **VPC**: Creates a Virtual Private Cloud.
+- **Subnets**: Configures subnets.
+- **Security Groups (SG)**: Sets up security groups.
+- **EKS Cluster**: Creates an EKS cluster.
+- **Nodes**: Configures worker nodes.
+- **Roles and Policies**: Sets up necessary roles and policies.
+
+## Conclusion
+
+This setup ensures a robust CI/CD pipeline with EKS for container orchestration and Jenkins for continuous integration and deployment.
 
 ## Repository Structure
 
