@@ -53,11 +53,11 @@ module "eks" {
   }
 }
 
-data "aws_eks_cluster" "cluster" {
+data "aws_eks_cluster" "my-eks-cluster" {
   name = module.eks.cluster_id
 }
 
-data "aws_eks_cluster_auth" "cluster" {
+data "aws_eks_cluster_auth" "my-eks-cluster" {
   name = module.eks.cluster_id
 }
 resource "kubernetes_cluster_role" "full_access" {
