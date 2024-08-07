@@ -53,11 +53,11 @@ module "eks" {
   }
 }
 
-# data "aws_eks_cluster" "cluster" {
-#   name = module.eks.cluster_name
-# }
+ data "aws_eks_cluster" "awake-cluster" {
+   name = module.eks.cluster_name
+ }
 
-data "aws_eks_cluster_auth" "cluster" {
+data "aws_eks_cluster_auth" "awake-cluster" {
   name = module.eks.cluster_name
 }
 output "cluster_id" {
