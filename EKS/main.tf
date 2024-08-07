@@ -63,3 +63,18 @@ data "aws_eks_cluster_auth" "cluster" {
 output "cluster_id" {
   value = module.eks.cluster_id
 }
+resource "kubernetes_cluster_role_binding" "node_reader" {
+  metadata {
+    name = "read-nodes"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "node-reader"
+  }
+  subject {
+    kind      = "User"
+    name      = "arn:aws:iam::851725178273:user/dimitri"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
