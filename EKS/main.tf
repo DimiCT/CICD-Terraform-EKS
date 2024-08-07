@@ -78,3 +78,18 @@ resource "kubernetes_cluster_role_binding" "node_reader" {
     api_group = "rbac.authorization.k8s.io"
   }
 }
+resource "kubernetes_cluster_role_binding" "pod_reader" {
+  metadata {
+    name = "read-pods"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "pod-reader"
+  }
+  subject {
+    kind      = "User"
+    name      = "arn:aws:iam::851725178273:user/dimitri"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
