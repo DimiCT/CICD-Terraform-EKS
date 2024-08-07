@@ -54,7 +54,7 @@ resource "kubernetes_cluster_role_binding" "full_access_binding" {
 
   subject {
     kind      = "User"
-    name      = "Dimitri"  # Replace with your user name or role name
+    name      = "Dimitri" # Replace with your user name or role name
     api_group = "rbac.authorization.k8s.io"
   }
 }
