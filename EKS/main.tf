@@ -1,4 +1,4 @@
-#Vpc
+# VPC
 module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
 
@@ -8,7 +8,6 @@ module "vpc" {
   azs             = data.aws_availability_zones.azs.names
   public_subnets  = var.public_subnets
   private_subnets = var.private_subnets
-
 
   enable_dns_hostnames = true
   enable_nat_gateway   = true
@@ -20,17 +19,14 @@ module "vpc" {
   public_subnet_tags = {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
     "kubernetes.io/role/elb"               = 1
-
   }
   private_subnet_tags = {
     "kubernetes.io/cluster/my-eks-cluster" = "shared"
-    "kubernetes.io/role/private_elb"       = 1
-
+    "kubernetes.io/role/internal-elb"      = 1
   }
 }
 
-#EKS
-
+# EKS
 module "eks" {
   source                         = "terraform-aws-modules/eks/aws"
   cluster_name                   = "my-eks-cluster"
@@ -45,14 +41,17 @@ module "eks" {
       max_size       = 3
       desired_size   = 2
       instance_types = var.instance_types
+      key_name       = var.key_name  # Add this line if using SSH keys
     }
   }
+
   tags = {
     Environment = "dev"
     Terraform   = "true"
   }
 }
 
+# Data Sources
 data "aws_eks_cluster" "my-eks-cluster" {
   name = module.eks.cluster_id
 }
@@ -60,6 +59,14 @@ data "aws_eks_cluster" "my-eks-cluster" {
 data "aws_eks_cluster_auth" "my-eks-cluster" {
   name = module.eks.cluster_id
 }
+
+provider "kubernetes" {
+  host                   = data.aws_eks_cluster.my-eks-cluster.endpoint
+  cluster_ca_certificate = base64decode(data.aws_eks_cluster.my-eks-cluster.certificate_authority[0].data)
+  token                  = data.aws_eks_cluster_auth.my-eks-cluster.token
+}
+
+# Kubernetes Cluster Role and Binding
 resource "kubernetes_cluster_role" "full_access" {
   metadata {
     name = "full-access"
@@ -96,7 +103,6 @@ resource "kubernetes_cluster_role" "full_access" {
   }
 }
 
-# Bind the ClusterRole to a user
 resource "kubernetes_cluster_role_binding" "full_access_binding" {
   metadata {
     name = "full-access-binding"
