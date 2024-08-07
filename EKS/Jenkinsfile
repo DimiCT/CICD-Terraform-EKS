@@ -1,124 +1,72 @@
 pipeline {
     agent any
-    parameters {
-        choice(name: 'ACTION', choices: ['apply', 'destroy'], description: 'Choose Terraform action to perform')
-    }
     environment {
         AWS_ACCESS_KEY_ID = credentials('AWS_ACCESS_KEY_ID')
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION = 'eu-west-1'
-        KUBECONFIG = "${env.WORKSPACE}/.kube/config" // Use Jenkins workspace for kubeconfig
     }
-    stages {
-        stage('Checkout SCM') {
-            steps {
-                script {
-                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/DimiCT/CICD-Terraform-EKS.git']])
+    stages{
+        stage('Checkout SCM'){
+            steps{
+                script{
+                    //Generate  using pipeline syntax
                 }
             }
         }
-        stage('Configure AWS CLI') {
-            steps {
-                script {
-                    sh 'aws configure set aws_access_key_id ${AWS_ACCESS_KEY_ID}'
-                    sh 'aws configure set aws_secret_access_key ${AWS_SECRET_ACCESS_KEY}'
-                    sh 'aws configure set region ${AWS_DEFAULT_REGION}'
-                }
-            }
-        }
-        stage('Initializing Terraform') {
-            steps {
-                script {
-                    dir('EKS') {
-                        sh 'terraform init'
+         stage('Initializing Terraform'){
+            steps{
+                script{
+                    dir('EKS'){
+                         sh 'terraform init'
                     }
                 }
             }
         }
-        stage('Formatting Configuration Files') {
-            steps {
-                script {
-                    dir('EKS') {
-                        sh 'terraform fmt'
+        stage('Formating terraform code'){
+            steps{
+                script{
+                    dir('EKS'){
+                         sh 'terraform fmt'
                     }
                 }
             }
         }
-        stage('Validating Terraform') {
-            steps {
-                script {
-                    dir('EKS') {
-                        sh 'terraform validate'
+        stage('Validating Terraform'){
+            steps{
+                script{
+                    dir('EKS'){
+                         sh 'terraform validate'
                     }
                 }
             }
         }
-        stage('Terraform Plan') {
-            steps {
-                script {
-                    dir('EKS') {
-                        sh 'terraform plan'
+        stage('Previewing the infrastructure'){
+            steps{
+                script{
+                    dir('EKS'){
+                         sh 'terraform plan'
                     }
-                }
-                // Uncomment the input step if needed
-                // input(message: "Are you sure you want to proceed?", ok: "Proceed")
-            }
-        }
-        stage('Executing Terraform Action') {
-            steps {
-                script {
-                    dir('EKS') {
-                        def action = params.ACTION
-                        sh "terraform ${action} --auto-approve"
-                    }
+                    input(message: "Are you sure to proceed?", ok: "proceed")
                 }
             }
         }
-        stage('Initializing Helm') {
-            steps {
-                script {
-                    sh 'helm repo add bitnami https://charts.bitnami.com/bitnami'
-                    sh 'helm repo update'
-                }
-            }
-        }
-        stage('Deploying NGINX') {
-            steps {
-                script {
-                    dir('EKS/configuration-files') {
-                        sh 'aws eks update-kubeconfig --name awake-cluster --kubeconfig "$KUBECONFIG"'
-                        sh 'kubectl apply -f deployment.yml --kubeconfig "$KUBECONFIG" --validate=false'
-                        sh 'kubectl apply -f service.yml --kubeconfig "$KUBECONFIG" --validate=false'
+        stage('Creating/Destroying an EKS cluster'){
+            steps{
+                script{
+                    dir('EKS'){
+                         sh 'terraform $action --auto-approve'
                     }
                 }
             }
         }
-        stage('Update Kubeconfig') {
-            steps {
-                script {
-                    sh 'aws eks update-kubeconfig --name awake-cluster --kubeconfig "$KUBECONFIG"'
-                }
-            }
-        }
-        stage('Deploying Jenkins') {
-            steps {
-                script {
-                    sh 'helm install jenkins bitnami/jenkins --namespace awake-namespace --create-namespace --kubeconfig "$KUBECONFIG"'
-                }
-            }
-        }
-        stage('Verify Jenkins Deployment') {
-            steps {
-                script {
-                    sh 'kubectl get pods -n awake-namespace --kubeconfig "$KUBECONFIG"'
-                    sh 'kubectl get svc -n awake-namespace --kubeconfig "$KUBECONFIG"'
-                }
-            }
-        }
-        stage('Deploying Esthesis') {
-            steps {
-                script {
-                    sh 'helm install esthesis bitnami/nginx --namespace esthesis-namespace --create-namespace --kubeconfig "$KUBECONFIG"'
+        stage("Deploying Nginx"){
+            steps{
+                script{
+                    dir('EKS/configuration-files'){
+                        sh 'aws eks update-kubeconfig --name my-eks-cluster'
+                        sh 'kubectl apply -f deployment.yml'
+                        sh 'kubectl apply -f service.yml'
+                    }
                 }
             }
         }

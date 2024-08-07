@@ -68,7 +68,7 @@ module "ec2_instance" {
   name = "jenkins_server"
 
   instance_type               = var.instance_type
-  ami                         = data.aws_ami.jenkins.id
+  ami                         = data.aws_ami.example.id
   key_name                    = "jenkins"
   monitoring                  = true
   vpc_security_group_ids      = [module.sg.security_group_id]
@@ -84,4 +84,3 @@ module "ec2_instance" {
     Environment = "dev"
   }
 }
-
