@@ -26,7 +26,7 @@ pipeline {
             steps{
                 script{
                     dir('EKS'){
-                         sh 'terraform fmt'
+                         sh 'terraform fmt -recursive'
                     }
                 }
             }
@@ -46,15 +46,19 @@ pipeline {
                     dir('EKS'){
                          sh 'terraform plan'
                     }
-                    input(message: "Are you sure to proceed?", ok: "proceed")
+                    //input(message: "Are you sure to proceed?", ok: "proceed")
                 }
             }
         }
-        stage('Creating/Destroying an EKS cluster'){
-            steps{
-                script{
-                    dir('EKS'){
-                         sh 'terraform $action --auto-approve'
+         stage('Creating EKS Cluster') {
+            steps {
+                script {
+                    dir('EKS') {
+                        // Define the action variable
+                        action = "apply"
+                        action = "destroy"
+                        // Execute the terraform command with the action
+                        sh "terraform ${action} --auto-approve"
                     }
                 }
             }
