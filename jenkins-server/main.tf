@@ -45,6 +45,20 @@ module "sg" {
       protocol    = "tcp"
       description = "SSH"
       cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 80
+      to_port     = 80
+      protocol    = "tcp"
+      description = "HTTP"
+      cidr_blocks = "0.0.0.0/0"
+    },
+    {
+      from_port   = 443
+      to_port     = 443
+      protocol    = "tcp"
+      description = "HTTPS"
+      cidr_blocks = "0.0.0.0/0"
     }
   ]
   egress_with_cidr_blocks = [
@@ -68,7 +82,7 @@ module "ec2_instance" {
   name = "jenkins_server"
 
   instance_type               = var.instance_type
-  ami                         = data.aws_ami.jenkins.id
+  ami                         = data.aws_ami.example.id
   key_name                    = "jenkins"
   monitoring                  = true
   vpc_security_group_ids      = [module.sg.security_group_id]

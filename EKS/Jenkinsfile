@@ -5,11 +5,11 @@ pipeline {
         AWS_SECRET_ACCESS_KEY = credentials('AWS_SECRET_ACCESS_KEY')
         AWS_DEFAULT_REGION = 'eu-west-1'
     }
-    stages{
-        stage('Checkout SCM'){
-            steps{
-                script{
-                    //Generate  using pipeline syntax
+    stages {
+        stage('Checkout SCM') {
+            steps {
+                script {
+                    checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/DimiCT/CICD-Terraform-EKS.git']])
                 }
             }
         }
@@ -26,7 +26,7 @@ pipeline {
             steps{
                 script{
                     dir('EKS'){
-                         sh 'terraform fmt'
+                         sh 'terraform fmt -recursive'
                     }
                 }
             }
@@ -46,7 +46,7 @@ pipeline {
                     dir('EKS'){
                          sh 'terraform plan'
                     }
-                    input(message: "Are you sure to proceed?", ok: "proceed")
+                    //input(message: "Are you sure to proceed?", ok: "proceed")
                 }
             }
         }
@@ -63,7 +63,7 @@ pipeline {
             steps{
                 script{
                     dir('EKS/configuration-files'){
-                        sh 'aws eks update-kubeconfig --name awake-cluster'
+                        sh 'aws eks update-kubeconfig --name awake'
                         sh 'kubectl apply -f deployment.yml'
                         sh 'kubectl apply -f service.yml'
                     }
